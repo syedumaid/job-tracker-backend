@@ -88,6 +88,24 @@ app.patch("/jobs/:id/archive", (req, res) => {
   res.json(jobs[index]);
 });
 
+app.post("/jobs", (req, res) => {
+    const jobs = readJSON(JOBS_FILE);
+    const newJob = {
+      id: Date.now().toString(),
+      company: req.body.company,
+      title: req.body.title,
+      status: req.body.status,
+      salary: req.body.salary || "",
+      description: req.body.description || "",
+      tags: req.body.tags || "",
+      date: new Date().toISOString()  // <-- Add this line
+    };
+    jobs.push(newJob);
+    writeJSON(JOBS_FILE, jobs);
+    res.json(newJob);
+  });
+  
+
 // ======== CONTACT ROUTES =========
 app.get("/contacts", (req, res) => {
     const contacts = readContacts();
@@ -133,6 +151,18 @@ app.get("/contacts", (req, res) => {
       status: req.body.status,
       comments: req.body.comments
     };
+    app.post("/contacts", (req, res) => {
+        const contacts = readContacts();
+        const newContact = {
+          id: Date.now().toString(),
+          ...req.body,
+          date: new Date().toISOString()  // <-- Add this line
+        };
+        contacts.push(newContact);
+        writeContacts(contacts);
+        res.json(newContact);
+      });
+      
   
     writeContacts(contacts);
     res.json(contacts[index]);
